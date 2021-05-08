@@ -1,0 +1,20 @@
+[
+    {
+        "groupkey": "Staff",
+        "name": "Thao tác với nhân viên",
+        "permissions": [
+            {
+                "name": "Tạo nhân viên",
+                "key": "createStaff"
+            },
+            {
+                "name": "Cập nhật thông tin nhân viên",
+                "key": "updateStaff"
+            },
+            {
+                "name": "Xoá nhân viên",
+                "key": "deleteStaff"
+            }
+        ]
+    }
+]
