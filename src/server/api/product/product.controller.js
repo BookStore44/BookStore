@@ -22,7 +22,7 @@ const createProduct = async (req, res) => {
 }
 const deleteByProductName = async (req, res) => {
     try {
-        await ProductModel.findOneAndUpdate({ productname: req.body.productname }, { lock: status.lock.active });
+        await ProductModel.findOneAndUpdate({ productname: req.body.productname }, { lock: status.lock.ACTIVE });
         restoClient.resJson(res, {
             status: 200,
             msg: 'Xóa Product thành công'
@@ -41,7 +41,7 @@ const allProductByIdCategory = async (req, res) => {
         if (req.query.category && req.query.category !== '') {
             condition.category = req.query.category;
         }
-        condition.lock = status.lock.disable;
+        condition.lock = status.lock.DISABLE;
         console.log(condition);
         const product = await ProductModel.find(condition).populate('category').exec();
         restoClient.resJson(res, {
@@ -55,9 +55,26 @@ const allProductByIdCategory = async (req, res) => {
         })
     }
 }
+const uploadImage = async (req, res) => {
+    if (req.file) {
+        const imgPath = 'public/images/' + req.file.filename;
+        //await UserModel.updateOne({ _id: req.data._id }, { avatar: req.file.filename });
+        await UserModel.updateOne({ _id: req.data._id }, { avatar: imgPath });
+        restoClient.resJson(res, {
+            status: 500,
+            msg: 'Da cap nhat ava'
+        })
+    } else {
+        restoClient.resJson(res, {
+            status: 500,
+            msg: 'Không thể cập nhật avatar'
+        })
+    }
+};
 
 export {
     createProduct,
     deleteByProductName,
     allProductByIdCategory,
+    uploadImage
 }

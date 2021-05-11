@@ -3,16 +3,27 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import status from '../../const/status.js'
 import restoClient from '../../const/restoClient.js'
+import CartModel from '../cart/cart.model.js'
 const signup = async (req, res) => {
     try {
-        await UserModel.create({
+        const user = await UserModel.create({
             username: req.body.username,
             password: bcrypt.hashSync(req.body.password, 2),
-            role: status.role.user,
+            role: status.role.USER,
         });
-        res.status(200).json('tao tai khoan thanh cong');
+        await CartModel.create({
+            userId: user._id,
+        });
+        restoClient.resJson(res, {
+            status: 200,
+            msg: 'tao tai khoan thanh cong',
+        })
     } catch (err) {
-        res.status(500).json('loi khi tao tai khoan')
+        restoClient.resJson(res, {
+            status: 200,
+            err: err,
+            msg: 'loi khi tao tai khoan',
+        })
     }
 }
 const signin = async (req, res) => {
@@ -32,7 +43,7 @@ const signin = async (req, res) => {
                     message: "Sai Password!"
                 });
             }
-            let payload = { username: data.username, role: data.role };///////////////id user
+            const payload = { _id: data._id, username: data.username, role: data.role };///////////////id user
             const token = jwt.sign(payload, 'matkhau')
             req.headers.authorization = token;
             //setCookie('token', data.token, 0.01)
@@ -42,11 +53,10 @@ const signin = async (req, res) => {
                 token: token
             })
         }
-        else
-            return restoClient.resJson(res, {
-                status: 500,
-                msg: 'Khong ton tai username',
-            })
+        return restoClient.resJson(res, {
+            status: 500,
+            msg: 'Khong ton tai username',
+        })
     }
     catch (err) {
         restoClient.resJson(res, {
@@ -74,7 +84,7 @@ const allStaff = async (req, res) => {
 }
 const deleteByUsername = async (req, res) => {
     try {
-        await UserModel.findOneAndUpdate({ username: req.body.username }, { lock: status.lock.active })
+        await UserModel.findOneAndUpdate({ username: req.body.username }, { lock: status.lock.ACTIVE })
         restoClient.resJson(res, {
             status: 200,
             msg: 'Xóa nguoi dung thành công',
@@ -89,7 +99,7 @@ const deleteByUsername = async (req, res) => {
 };
 const updateAvatar = async (req, res) => {
     if (req.file) {
-        const imgPath='public/images/' + req.file.originalname;
+        const imgPath = 'public/images/' + req.file.filename;
         //await UserModel.updateOne({ _id: req.data._id }, { avatar: req.file.filename });
         await UserModel.updateOne({ _id: req.data._id }, { avatar: imgPath });
         restoClient.resJson(res, {

@@ -12,7 +12,7 @@ const isExistproductname = async (req, res, next) => {
                 msg: 'productname da ton tai',
             })
         }
-        else next();
+        next();
     } catch (error) {
         restoClient.resJson(res, {
             status: 500,
@@ -20,22 +20,7 @@ const isExistproductname = async (req, res, next) => {
         })
     }
 }
-const checkReqProduct = {
-    body: Joi.object({
-        productname: Joi.string()
-            .required(),
-        categoryname: Joi.string()
-            .required(),
-    }),
-}
-const checkReqProductName = {
-    body: Joi.object({
-        productname: Joi.string()
-            .required(),
-    }),
-}
+
 export {
     isExistproductname,
-    checkReqProduct,
-    checkReqProductName
 };

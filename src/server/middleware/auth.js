@@ -43,12 +43,17 @@ const checkLogin = async (req, res, next) => { //kiem tra tai khoan nay da dang 
     }
 }
 const isManager = (req, res, next) => {
-    if (req.data.role === status.role.manager) next()
+    if (req.data.role === status.role.MANAGER) next()
     else
         res.json('khong du quyen')
 }
 const isStaffOrManager= (req, res, next) => {
-    if (req.data.role === status.role.staff||req.data.role === status.role.manager) next()
+    if (req.data.role === status.role.STAFF||req.data.role === status.role.MANAGER) next()
+    else
+        res.json('khong du quyen')
+}
+const isUser= (req, res, next) => {
+    if (req.data.role === status.role.USER) next()
     else
         res.json('khong du quyen')
 }
@@ -56,4 +61,5 @@ export {
     checkLogin,
     isManager,
     isStaffOrManager,
+    isUser
 }

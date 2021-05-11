@@ -20,18 +20,18 @@ const createCategory = async (req, res) => {
 }
 const deleteByCate = async (req, res) => {
     try {
-        await ProductModel.updateMany({ category: req.body.category }, { "$set": { lock: status.lock.active } });
-        const data = await CateModel.findOneAndUpdate({ _id: req.body.category }, { lock: status.lock.active })
+        await ProductModel.updateMany({ category: req.body.category }, { "$set": { lock: status.lock.ACTIVE } });
+        const data = await CateModel.findOneAndUpdate({ _id: req.body.category }, { lock: status.lock.ACTIVE })
         if (data == null)
             return restoClient.resJson(res, {
                 status: 500,
                 msg: 'khong ton tai category'
             })
-        else
-            restoClient.resJson(res, {
-                status: 200,
-                msg: 'Xóa category thành công'
-            })
+
+        restoClient.resJson(res, {
+            status: 200,
+            msg: 'Xóa category thành công'
+        })
     } catch (err) {
         restoClient.resJson(res, {
             status: 500,
@@ -41,7 +41,7 @@ const deleteByCate = async (req, res) => {
 };
 const allCategory = async (req, res) => {
     try {
-        const cate = await CateModel.find({ lock: status.lock.disable });
+        const cate = await CateModel.find({ lock: status.lock.DISABLE });
         //console.log(staff)
         restoClient.resJson(res, {
             status: 200,

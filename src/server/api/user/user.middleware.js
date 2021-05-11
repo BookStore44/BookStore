@@ -13,7 +13,7 @@ const isExistUsername = async (req, res, next) => {
         msg: 'Username da ton tai'
       })
     }
-    else next();
+    next();
   }
   catch (err) {
     restoClient.resJson(res, {
@@ -36,26 +36,8 @@ const checktoken = (req, res, next) => {//check client da dang nhap chua
   }
 }
 
-const loginValidation = {
-  body: Joi.object({
-    username: Joi.string()
-      .regex(/[a-zA-Z0-9]{3,30}/)
-      .required(),
-    password: Joi.string()
-      .regex(/[a-zA-Z0-9]{3,30}/)
-      .required(),
-  }),
-}
-const checkReqUsername = {
-  body: Joi.object({
-    username: Joi.string()
-      .regex(/[a-zA-Z0-9]{3,30}/)
-      .required(),
-  }),
-}
+
 export {
   isExistUsername,
   checktoken,
-  loginValidation,
-  checkReqUsername
 };

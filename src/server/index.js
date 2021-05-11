@@ -9,6 +9,7 @@ import jwt from 'jsonwebtoken'
 import userRoute from './api/user/user.route.js'
 import cateRoute from './api/category/category.route.js'
 import productRoute from './api/product/product.route.js'
+import cartRoute from './api/cart/cart.route.js'
 //import cookieParser from 'cookie-parser'
 db;
 const app = express();
@@ -22,6 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/user', userRoute)
 app.use('/category', cateRoute)
 app.use('/product', productRoute)
+app.use('/cart', cartRoute)
 app.listen(3000, () => {
     console.log('start server');
 });

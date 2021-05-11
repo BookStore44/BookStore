@@ -1,13 +1,13 @@
 const role=
 {
-    manager: 2,
-    staff:1,
-    user: 0
+    MANAGER: 2,
+    STAFF:1,
+    USER: 0
 }
 const lock=
 {
-    active:true,
-    disable: false
+    ACTIVE:true,
+    DISABLE: false
 }
 
 export default
