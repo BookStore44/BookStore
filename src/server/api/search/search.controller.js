@@ -3,7 +3,7 @@ import restoClient from '../../const/restoClient.js'
 const searchProduct = async (req, res) => {
     try {
         const productname=req.query.productname;
-        const search= await productModel.findOne({ "productname" : { $regex: productname, $options: 'i' } });
+        const search= await productModel.find({ productname : { $regex: productname, $options: 'i' } });
         return restoClient.resJson(res, {
             status: 200,
             data: search,

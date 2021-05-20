@@ -1,10 +1,11 @@
 import CateModel from './category.model.js'
 import jwt from 'jsonwebtoken'
-import status from '../../const/status.js'
+import {role,lock,status} from '../../const/status.js'
 import restoClient from '../../const/restoClient.js'
 const isExistcategoryname = async (req, res, next) => {
     try {
-        const data = await CateModel.findOne({ categoryname: req.body.categoryname })
+        const categoryname= req.body.categoryname;
+        const data = await CateModel.findOne({ categoryname })
         if (data) {
             return restoClient.resJson(res, {
                 status: 500,
@@ -20,6 +21,6 @@ const isExistcategoryname = async (req, res, next) => {
     }
 }
 
-export {
+export default{
     isExistcategoryname,
 };

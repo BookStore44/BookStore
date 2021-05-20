@@ -1,8 +1,8 @@
 import express from 'express';
-import *as authModel from '../../middleware/auth.js';
-import *as ProductMiddleware from './product.middleware.js'
+import authModel from '../../middleware/auth.js';
+import ProductMiddleware from './product.middleware.js'
 import { validate, ValidationError, Joi } from 'express-validation'
-import *as ProductController from './product.controller.js'
+import ProductController from './product.controller.js'
 import { checkReqProduct, checkReqProductName } from './product.validation.js'
 const router = express.Router();
 import multer from 'multer';

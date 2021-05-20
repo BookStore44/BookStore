@@ -9,7 +9,15 @@ const lock=
     ACTIVE:true,
     DISABLE: false
 }
+const status=
+{
+    WAIT: 0,
+    PROCESS: 1,
+    DELIVER: 2,
+    DONE:3,
+}
 
-export default
+export
 {role,
-lock}
+lock,
+status}

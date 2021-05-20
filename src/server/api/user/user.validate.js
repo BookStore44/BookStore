@@ -16,7 +16,7 @@ const checkReqUsername = {
             .required(),
     }),
 }
-export {
+export{
     loginValidation,
     checkReqUsername
 };

@@ -1,11 +1,12 @@
 import ProductModel from './product.model.js'
 import jwt from 'jsonwebtoken'
 import { validate, ValidationError, Joi } from 'express-validation'
-import status from '../../const/status.js'
+import {role,lock,status} from '../../const/status.js'
 import restoClient from '../../const/restoClient.js'
 const isExistproductname = async (req, res, next) => {
     try {
-        const data = await ProductModel.findOne({ productname: req.body.productname })
+        const productname= req.body.productname;
+        const data = await ProductModel.findOne({ productname})
         if (data) {
             return restoClient.resJson(res, {
                 status: 500,
@@ -14,13 +15,13 @@ const isExistproductname = async (req, res, next) => {
         }
         next();
     } catch (error) {
-        restoClient.resJson(res, {
+        return restoClient.resJson(res, {
             status: 500,
             msg: 'loi server',
         })
     }
 }
 
-export {
+export default{
     isExistproductname,
 };

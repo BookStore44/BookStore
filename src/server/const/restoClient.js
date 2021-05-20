@@ -1,5 +1,5 @@
 const resJson = (res, source = {}) => {
-    const {status, data, msg, err, token} = source;
+    const { status, data, msg, err, token } = source;
     res.status(status).json({
         data: data,
         msg: msg,
@@ -12,6 +12,6 @@ const resJson = (res, source = {}) => {
 
 // })
 
-export default{
+export default {
     resJson
 }

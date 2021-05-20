@@ -1,20 +1,22 @@
 import ProductModel from './product.model.js'
 import CateModel from '../category/category.model.js'
-import status from '../../const/status.js'
+import { role, lock, status } from '../../const/status.js'
 import restoClient from '../../const/restoClient.js'
 const createProduct = async (req, res) => {
     try {
-        const category = await CateModel.findOne({ categoryname: req.body.categoryname })
+        const categoryname = req.body.categoryname;
+        const productname = req.body.productname;
+        const category = await CateModel.findOne({ categoryname })
         ProductModel.create({
-            productname: req.body.productname,
+            productname,
             category: category._id,
         });
-        restoClient.resJson(res, {
+        return restoClient.resJson(res, {
             status: 200,
             msg: 'them product thanh cong'
         })
     } catch (err) {
-        restoClient.resJson(res, {
+        return restoClient.resJson(res, {
             status: 500,
             err: err
         })
@@ -22,13 +24,14 @@ const createProduct = async (req, res) => {
 }
 const deleteByProductName = async (req, res) => {
     try {
-        await ProductModel.findOneAndUpdate({ productname: req.body.productname }, { lock: status.lock.ACTIVE });
-        restoClient.resJson(res, {
+        const productname = req.body.productname;
+        await ProductModel.findOneAndUpdate({ productname }, { lock: lock.ACTIVE });
+        return restoClient.resJson(res, {
             status: 200,
             msg: 'Xóa Product thành công'
         })
     } catch (err) {
-        restoClient.resJson(res, {
+        return restoClient.resJson(res, {
             status: 500,
             err: err,
             msg: 'loi khi xoa Product'
@@ -38,18 +41,19 @@ const deleteByProductName = async (req, res) => {
 const allProductByIdCategory = async (req, res) => {
     try {
         const condition = {};
-        if (req.query.category && req.query.category !== '') {
-            condition.category = req.query.category;
+        const categoryid = req.query.category;
+        if (categoryid && categoryid !== '') {
+            condition.category = categoryid;
         }
-        condition.lock = status.lock.DISABLE;
+        condition.lock = lock.DISABLE;
         console.log(condition);
         const product = await ProductModel.find(condition).populate('category').exec();
-        restoClient.resJson(res, {
+        return restoClient.resJson(res, {
             status: 200,
             data: product,
         })
     } catch (err) {
-        restoClient.resJson(res, {
+        return restoClient.resJson(res, {
             status: 500,
             msg: 'Không thể lấy danh sách Product',
         })
@@ -58,21 +62,22 @@ const allProductByIdCategory = async (req, res) => {
 const uploadImage = async (req, res) => {
     if (req.file) {
         const imgPath = 'public/images/' + req.file.filename;
+        const userId = req.data._id;
         //await UserModel.updateOne({ _id: req.data._id }, { avatar: req.file.filename });
-        await UserModel.updateOne({ _id: req.data._id }, { avatar: imgPath });
-        restoClient.resJson(res, {
+        await UserModel.updateOne({ _id: userId }, { avatar: imgPath });
+        return restoClient.resJson(res, {
             status: 500,
             msg: 'Da cap nhat ava'
         })
     } else {
-        restoClient.resJson(res, {
+        return restoClient.resJson(res, {
             status: 500,
             msg: 'Không thể cập nhật avatar'
         })
     }
 };
 
-export {
+export default {
     createProduct,
     deleteByProductName,
     allProductByIdCategory,

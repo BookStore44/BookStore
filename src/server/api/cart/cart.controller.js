@@ -1,20 +1,37 @@
 import CartModel from './cart.model.js'
 import UserModel from '../user/user.model.js'
-import status from '../../const/status.js'
+import { role, lock, status } from '../../const/status.js'
 import restoClient from '../../const/restoClient.js'
+import mongoose from 'mongoose'
 const addtoCart = async (req, res) => {
-    console.log(req.query.product);
-    console.log(req.query.number);
     try {
-        await CartModel.findOne({userId: req.data._id})
-        await CartModel.updateOne({ userId: req.data._id }, { $push: {product:{_id: req.query.product, Number: req.query.number}} });
-        
-        restoClient.resJson(res, {
+        const { _id, amount } = req.query;
+        const userId = req.data._id;
+        await CartModel.updateOne({ userId }, { $push: { products: { _id: userId, amount } } });//o day no da tu check xem la co product id nay khong, do trong model mình đã dùng ref
+
+        return restoClient.resJson(res, {
             status: 200,
             msg: 'them product vao cart thanh cong'
         })
     } catch (err) {
-        restoClient.resJson(res, {
+        return restoClient.resJson(res, {
+            status: 500,
+            err: err
+        })
+    }
+}
+const updateCart = async (req, res) => {
+    try {
+        const products = req.body;
+        const userId = req.data._id;
+        await CartModel.updateOne({ userId }, { products });
+
+        return restoClient.resJson(res, {
+            status: 200,
+            msg: 'them product vao cart thanh cong'
+        })
+    } catch (err) {
+        return restoClient.resJson(res, {
             status: 500,
             err: err
         })
@@ -23,21 +40,53 @@ const addtoCart = async (req, res) => {
 
 const CartByUserId = async (req, res) => {
     try {
-        const cart = await CartModel.find({ userId: req.data._id }).populate('user').exec();//req.data._id chinh la id cua nguoi dung dang dang nhap
-        restoClient.resJson(res, {
+        const userId = req.data._id;
+        const cart = await CartModel.aggregate([
+            {
+                $match: {//loc nhung document voi dieu kien cho trước
+                    userId: userId
+                },
+            },
+
+            {
+                $unwind: "$products",//tach mang và tao ra cac doi tuong sao chep tu doi tuong dau
+            },
+            {
+                $lookup: {//giong where bằng
+                    from: "product",//truy van toi collection nao
+                    localField: "products._id",//truong hien tai
+                    foreignField: "_id",//truong lien ket tơi
+                    as: "InfoProduct",
+                },
+            },
+            {
+                $unwind: "$InfoProduct",//tach mang và tao ra cac doi tuong sao chep tu doi tuong dau
+            },
+            {
+                $match: {//loc nhung document voi dieu kien cho trước
+                    'InfoProduct.lock': false,
+                }, 
+            }
+        ]);
+
+
+        //const cartlock= cart.lock=true;
+        return restoClient.resJson(res, {
             status: 200,
             data: cart,
         })
     } catch (err) {
-        restoClient.resJson(res, {
+        return restoClient.resJson(res, {
             status: 500,
             msg: 'Không thể lấy thong tin gio hang',
+            err: err
         })
     }
 }
 
 
-export {
+export default {
     addtoCart,
     CartByUserId,
+    updateCart
 }

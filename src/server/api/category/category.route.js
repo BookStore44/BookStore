@@ -1,8 +1,8 @@
 import express from 'express';
-import *as authModel from '../../middleware/auth.js';
-import *as CateMiddleware from './category.middleware.js'
+import authModel from '../../middleware/auth.js';
+import CateMiddleware from './category.middleware.js'
 import { validate, ValidationError, Joi } from 'express-validation'
-import *as CateController from './category.controller.js'
+import CateController from './category.controller.js'
 import {checkReqCatename} from './category.validate.js'
 const router = express.Router();
 router.post('/addCategory',validate(checkReqCatename), authModel.checkLogin, authModel.isStaffOrManager,CateMiddleware.isExistcategoryname, CateController.createCategory)
