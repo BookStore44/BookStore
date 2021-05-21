@@ -10,7 +10,7 @@ const isExistproductname = async (req, res, next) => {
         if (data) {
             return restoClient.resJson(res, {
                 status: 400,
-                msg: 'product name leather',
+                msg: 'product name already exist',
             })
         }
         next();

@@ -93,19 +93,7 @@ const allStaff = async (req, res) => {
 
 const allUser = async (req, res) => {
     try {
-        const page = +req.query.page || 0;
-        if (page < 0) page = 1;
-        const offset = page * pagination.LIMIT;
-        const [total, rows] = await Promise.all([
-            await UserModel.countDocuments(),
-            await UserModel.find().skip(offset).limit(pagination.LIMIT),
-        ]);
-        const nPages = Math.ceil(total / pagination.LIMIT);
-        if (page > nPages)
-            return restoClient.resJson(res, {
-                status: 404,
-                msg: 'page does not exist'
-            })
+        
         //console.log(staff)
         restoClient.resJson(res, {
             status: 200,

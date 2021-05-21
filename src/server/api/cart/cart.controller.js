@@ -22,7 +22,7 @@ const addtoCart = async (req, res) => {
 }
 const updateCart = async (req, res) => {
     try {
-        const products = req.body;
+        const {products} = req.body;
         const userId = req.data._id;
         await CartModel.updateOne({ userId }, { products });
 
@@ -68,8 +68,6 @@ const CartByUserId = async (req, res) => {
                 }, 
             }
         ]);
-
-
         //const cartlock= cart.lock=true;
         return restoClient.resJson(res, {
             status: 200,
