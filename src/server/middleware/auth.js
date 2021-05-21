@@ -33,7 +33,7 @@ const checkLogin = async (req, res, next) => { //kiem tra tai khoan nay da dang 
             
         }
         else restoClient.resJson(res, {
-            status: 500,
+            status: 403,
             err: err,
             msg: 'ban chua dang nhap'
         })
@@ -42,7 +42,7 @@ const checkLogin = async (req, res, next) => { //kiem tra tai khoan nay da dang 
     } catch (err) {
         console.log(err);
         restoClient.resJson(res, {
-            status: 500,
+            status: 400,
             err: err,
             msg: 'token khong hop le'
         })
@@ -52,7 +52,7 @@ const isManager = (req, res, next) => {
     if (req.data.role === role.MANAGER) next()
     else
         restoClient.resJson(res, {
-            status: 500,
+            status: 403,
             msg: 'khong du quyen'
         })
 }
@@ -60,7 +60,7 @@ const isStaffOrManager = (req, res, next) => {
     if (req.data.role === role.STAFF || req.data.role === role.MANAGER) next()
     else
         restoClient.resJson(res, {
-            status: 500,
+            status: 403,
             msg: 'khong du quyen'
         })
 }
@@ -68,7 +68,7 @@ const isUser = (req, res, next) => {
     if (req.data.role === role.USER) next()
     else
         restoClient.resJson(res, {
-            status: 500,
+            status: 403,
             msg: 'khong du quyen'
         })
 }

@@ -1,11 +1,11 @@
 import UserModel from './user.model.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { role, lock, status } from '../../const/status.js'
+import {pagination, role, lock, status } from '../../const/status.js'
 import restoClient from '../../const/restoClient.js'
 import CartModel from '../cart/cart.model.js'
 import mongoose from 'mongoose'
-const limit = 2;
+
 const signup = async (req, res) => {
     const session = await mongoose.startSession();
     try {
@@ -22,15 +22,15 @@ const signup = async (req, res) => {
         await session.commitTransaction();
         restoClient.resJson(res, {
             status: 200,
-            msg: 'tao tai khoan thanh cong',
+            msg: 'Account successfully created',
         })
     } catch (err) {
         await session.abortTransaction();
         session.endSession();
         restoClient.resJson(res, {
-            status: 200,
+            status: 500,
             err: err,
-            msg: 'loi khi tao tai khoan',
+            msg: 'Error creating account',
         })
     }
 }
@@ -46,9 +46,9 @@ const signin = async (req, res) => {
                 data.password
             );
             if (!passwordIsValid) {
-                return res.status(401).send({
+                return res.status(400).send({
                     accessToken: null,
-                    message: "Sai Password!"
+                    message: "Wrong Password!"
                 });
             }
             const payload = { _id: data._id, username: data.username, role: data.role };///////////////id user
@@ -56,14 +56,14 @@ const signin = async (req, res) => {
             req.headers.authorization = token;
             //setCookie('token', data.token, 0.01)
             return restoClient.resJson(res, {
-                status: 500,
-                msg: 'thanh cong',
+                status: 200,
+                msg: 'success',
                 token: token
             })
         }
         return restoClient.resJson(res, {
-            status: 500,
-            msg: 'Khong ton tai username',
+            status: 404,
+            msg: 'Username does not exist',
         })
     }
     catch (err) {
@@ -81,7 +81,7 @@ const allStaff = async (req, res) => {
         restoClient.resJson(res, {
             status: 200,
             data: staff,
-            msg: 'thanh cong'
+            msg: 'success'
         })
     } catch (err) {
         restoClient.resJson(res, {
@@ -95,22 +95,22 @@ const allUser = async (req, res) => {
     try {
         const page = +req.query.page || 0;
         if (page < 0) page = 1;
-        const offset = page * limit;
+        const offset = page * pagination.LIMIT;
         const [total, rows] = await Promise.all([
             await UserModel.countDocuments(),
-            await UserModel.find().skip(offset).limit(limit),
+            await UserModel.find().skip(offset).limit(pagination.LIMIT),
         ]);
-        const nPages = Math.ceil(total / limit);
+        const nPages = Math.ceil(total / pagination.LIMIT);
         if (page > nPages)
             return restoClient.resJson(res, {
-                status: 500,
-                msg: 'trang khong ton tai'
+                status: 404,
+                msg: 'page does not exist'
             })
         //console.log(staff)
         restoClient.resJson(res, {
             status: 200,
             data: rows,
-            msg: 'thanh cong'
+            msg: 'success'
         })
     } catch (err) {
         restoClient.resJson(res, {
@@ -127,13 +127,13 @@ const deleteByUsername = async (req, res) => {
         await UserModel.findOneAndUpdate({ username }, { lock: status.lock.ACTIVE })
         return restoClient.resJson(res, {
             status: 200,
-            msg: 'Xóa nguoi dung thành công',
+            msg: 'Delete user successfully',
         })
     } catch (err) {
         return restoClient.resJson(res, {
             status: 500,
             err: err,
-            msg: 'loi khi xoa nguoi dung'
+            msg: 'error when deleting user'
         })
     }
 };
@@ -144,13 +144,13 @@ const updateAvatar = async (req, res) => {
         const userid = req.data._id;
         await UserModel.updateOne({ _id: userid }, { avatar: imgPath });
         return restoClient.resJson(res, {
-            status: 500,
-            msg: 'Da cap nhat ava'
+            status: 200,
+            msg: 'Updated ava'
         })
     } else {
         return restoClient.resJson(res, {
             status: 500,
-            msg: 'Không thể cập nhật avatar'
+            msg: 'Unable to update avatar'
         })
     }
 };

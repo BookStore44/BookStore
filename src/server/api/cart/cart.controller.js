@@ -11,7 +11,7 @@ const addtoCart = async (req, res) => {
 
         return restoClient.resJson(res, {
             status: 200,
-            msg: 'them product vao cart thanh cong'
+            msg: 'product added to cart successfully'
         })
     } catch (err) {
         return restoClient.resJson(res, {
@@ -28,7 +28,7 @@ const updateCart = async (req, res) => {
 
         return restoClient.resJson(res, {
             status: 200,
-            msg: 'them product vao cart thanh cong'
+            msg: 'product added to cart successfully'
         })
     } catch (err) {
         return restoClient.resJson(res, {
@@ -78,7 +78,7 @@ const CartByUserId = async (req, res) => {
     } catch (err) {
         return restoClient.resJson(res, {
             status: 500,
-            msg: 'Không thể lấy thong tin gio hang',
+            msg: 'Can not get cart information',
             err: err
         })
     }

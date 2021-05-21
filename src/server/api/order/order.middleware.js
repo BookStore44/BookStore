@@ -7,14 +7,14 @@ const checkstatus = async (req, res, next) => {//check client da dang nhap chua
         const statusnew = ordercheck.status + 1;
         if (statusnew == status && status<4) next();////////////////////loi, ko co else
         else return restoClient.resJson(res, {
-            status: 500,
-            msg: 'trang thai moi khong hop le'
+            status: 403,
+            msg: 'new status is not valid'
         })
     }
     catch (err) {
         return restoClient.resJson(res, {
             status: 500,
-            msg: 'loi db'
+            msg: 'error database'
         })
     }
 }

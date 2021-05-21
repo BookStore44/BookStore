@@ -8,15 +8,15 @@ const isExistcategoryname = async (req, res, next) => {
         const data = await CateModel.findOne({ categoryname })
         if (data) {
             return restoClient.resJson(res, {
-                status: 500,
-                msg: 'categoryname da ton tai'
+                status: 400,
+                msg: 'category name already exists'
             })
         }
         next();
     } catch (error) {
         restoClient.resJson(res, {
             status: 500,
-            msg: 'loi server'
+            msg: 'server error'
         })
     }
 }

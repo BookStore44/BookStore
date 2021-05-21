@@ -10,8 +10,8 @@ const isExistUsername = async (req, res, next) => {
     const data = await UserModel.findOne({ username });
     if (data) {
       return restoClient.resJson(res, {
-        status: 400,
-        msg: 'Username da ton tai'
+        status: 404,
+        msg: 'Username already exists'
       })
     }
     next();
@@ -20,7 +20,7 @@ const isExistUsername = async (req, res, next) => {
     return restoClient.resJson(res, {
       status: 500,
       err: err,
-      msg: 'loi server'
+      msg: 'server error'
     })
   }
 }
@@ -32,7 +32,8 @@ const checktoken = (req, res, next) => {//check client da dang nhap chua
   }
   catch (err) {
     return restoClient.resJson(res, {
-      msg: 'ban can phai login'
+      status: 403,
+      msg: 'you need to login'
     })
   }
 }

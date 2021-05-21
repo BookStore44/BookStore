@@ -1,6 +1,6 @@
 import ProductModel from './product.model.js'
 import CateModel from '../category/category.model.js'
-import { role, lock, status } from '../../const/status.js'
+import { pagination, role, lock, status } from '../../const/status.js'
 import restoClient from '../../const/restoClient.js'
 const createProduct = async (req, res) => {
     try {
@@ -13,7 +13,7 @@ const createProduct = async (req, res) => {
         });
         return restoClient.resJson(res, {
             status: 200,
-            msg: 'them product thanh cong'
+            msg: 'successfully added product'
         })
     } catch (err) {
         return restoClient.resJson(res, {
@@ -28,34 +28,46 @@ const deleteByProductName = async (req, res) => {
         await ProductModel.findOneAndUpdate({ productname }, { lock: lock.ACTIVE });
         return restoClient.resJson(res, {
             status: 200,
-            msg: 'Xóa Product thành công'
+            msg: 'Delete Product successfully'
         })
     } catch (err) {
         return restoClient.resJson(res, {
             status: 500,
             err: err,
-            msg: 'loi khi xoa Product'
+            msg: 'error when deleting Product'
         })
     }
 };
 const allProductByIdCategory = async (req, res) => {
     try {
+        const page = +req.query.page || 0;
+        if (page < 0) page = 1;
+        const offset = page * pagination.LIMIT;
         const condition = {};
         const categoryid = req.query.category;
         if (categoryid && categoryid !== '') {
             condition.category = categoryid;
         }
         condition.lock = lock.DISABLE;
-        console.log(condition);
-        const product = await ProductModel.find(condition).populate('category').exec();
+        const [total, rows] = await Promise.all([
+            await ProductModel.countDocuments(condition),
+            await ProductModel.find(condition).populate('category').skip(offset).limit(pagination.LIMIT).exec(),
+        ]);
+        const nPages = Math.ceil(total / pagination.LIMIT);
+        if (page > nPages)
+            return restoClient.resJson(res, {
+                status: 404,
+                msg: 'page does not exist'
+            })
         return restoClient.resJson(res, {
             status: 200,
-            data: product,
+            data: rows
         })
     } catch (err) {
         return restoClient.resJson(res, {
             status: 500,
-            msg: 'Không thể lấy danh sách Product',
+            msg: 'Can not get list of Product',
+            err: err
         })
     }
 }
@@ -66,13 +78,13 @@ const uploadImage = async (req, res) => {
         //await UserModel.updateOne({ _id: req.data._id }, { avatar: req.file.filename });
         await UserModel.updateOne({ _id: userId }, { avatar: imgPath });
         return restoClient.resJson(res, {
-            status: 500,
-            msg: 'Da cap nhat ava'
+            status: 200,
+            msg: 'Updated ava'
         })
     } else {
         return restoClient.resJson(res, {
             status: 500,
-            msg: 'Không thể cập nhật avatar'
+            msg: 'Unable to update avatar'
         })
     }
 };

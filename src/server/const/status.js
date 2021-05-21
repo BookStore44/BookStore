@@ -1,23 +1,29 @@
-const role=
+const pagination={
+    LIMIT: 10
+}
+
+const role =
 {
     MANAGER: 2,
-    STAFF:1,
+    STAFF: 1,
     USER: 0
 }
-const lock=
+const lock =
 {
-    ACTIVE:true,
+    ACTIVE: true,
     DISABLE: false
 }
-const status=
+const status =
 {
     WAIT: 0,
     PROCESS: 1,
     DELIVER: 2,
-    DONE:3,
+    DONE: 3,
 }
 
-export
-{role,
-lock,
-status}
+export {
+    pagination,
+    role,
+    lock,
+    status
+}

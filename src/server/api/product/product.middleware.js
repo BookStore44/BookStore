@@ -9,15 +9,15 @@ const isExistproductname = async (req, res, next) => {
         const data = await ProductModel.findOne({ productname})
         if (data) {
             return restoClient.resJson(res, {
-                status: 500,
-                msg: 'productname da ton tai',
+                status: 400,
+                msg: 'product name leather',
             })
         }
         next();
     } catch (error) {
         return restoClient.resJson(res, {
             status: 500,
-            msg: 'loi server',
+            msg: 'server error',
         })
     }
 }

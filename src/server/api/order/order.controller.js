@@ -19,12 +19,12 @@ const addtoOrder = async (req, res) => {
     //     opts);
     await order.save(opts);
     await CartModel.updateOne({ userId: userid }, { products: [] }, opts);
-    const notify = new NotifyModel({ _id: order._id });
+    const notify = new NotifyModel({ orderId: order._id });
     await notify.save(opts);
     await session.commitTransaction();
     return restoClient.resJson(res, {
       status: 200,
-      msg: 'tao order thanh cong'
+      msg: 'order created successfully'
     })
   } catch (err) {
     await session.abortTransaction();
@@ -51,13 +51,13 @@ const updateStatus = async (req, res) => {
  
     restoClient.resJson(res, {
       status: 200,
-      msg: "da chuyen trang thai",
+      msg: "status changed",
     })
   } catch (err) {
      
     restoClient.resJson(res, {
       status: 500,
-      msg: 'Không thể lấy thong tin gio hang',
+      msg: 'Can not get cart info',
     })
   }
 }
