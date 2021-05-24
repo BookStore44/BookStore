@@ -5,6 +5,8 @@ const checkReqProduct = {
             .required(),
         categoryname: Joi.string()
             .required(),
+        price: Joi.number()
+        .required(),
     }),
 }
 const checkReqProductName = {

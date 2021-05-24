@@ -4,12 +4,12 @@ import { pagination, role, lock, status } from '../../const/status.js'
 import restoClient from '../../const/restoClient.js'
 const createProduct = async (req, res) => {
     try {
-        const categoryname = req.body.categoryname;
-        const productname = req.body.productname;
+        const { categoryname, name, price } = req.body;
         const category = await CateModel.findOne({ categoryname })
         ProductModel.create({
-            productname,
+            name,
             category: category._id,
+            price,
         });
         return restoClient.resJson(res, {
             status: 200,
@@ -24,8 +24,8 @@ const createProduct = async (req, res) => {
 }
 const deleteByProductName = async (req, res) => {
     try {
-        const productname = req.body.productname;
-        await ProductModel.findOneAndUpdate({ productname }, { lock: lock.ACTIVE });
+        const name = req.body.name;
+        await ProductModel.findOneAndUpdate({ name }, { lock: lock.ACTIVE });
         return restoClient.resJson(res, {
             status: 200,
             msg: 'Delete Product successfully'
@@ -72,11 +72,16 @@ const allProductByIdCategory = async (req, res) => {
     }
 }
 const uploadImage = async (req, res) => {
-    if (req.file) {
-        const imgPath = 'public/images/' + req.file.filename;
-        const userId = req.data._id;
+    const files = req.files;
+    if (files) {
+        //console.log(files.length());
+        //for (i = 0; i <= files.length(); i++)
+        console.log(req.files[0].filename);
+        const imgPath = 'public/images/' + files[0].filename;
+        const { _id } = req.query;
+        //console.log(_id);
         //await UserModel.updateOne({ _id: req.data._id }, { avatar: req.file.filename });
-        await UserModel.updateOne({ _id: userId }, { avatar: imgPath });
+        await ProductModel.updateOne({ _id }, { avatar: imgPath });
         return restoClient.resJson(res, {
             status: 200,
             msg: 'Updated ava'

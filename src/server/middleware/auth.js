@@ -34,7 +34,6 @@ const checkLogin = async (req, res, next) => { //kiem tra tai khoan nay da dang 
         }
         else restoClient.resJson(res, {
             status: 403,
-            err: err,
             msg: 'ban chua dang nhap'
         })
 

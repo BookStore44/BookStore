@@ -7,8 +7,6 @@ const schema = new mongoose.Schema({
         //price: { type: Number, require: 1, default: 0 }
     }],
     total: { type: Number, require: 1, default: 1 },
-}, {
-    collection: 'cart'
 });
 
 // const module = mongoose.model('cart', schema);

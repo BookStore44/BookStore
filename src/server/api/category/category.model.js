@@ -5,8 +5,7 @@ const schema = new mongoose.Schema({
         type: Boolean,
         default: false,
     }
-},
-{collection: 'category'});
+});
 
 const module = mongoose.model('category', schema);
 export default module;

@@ -3,13 +3,13 @@ import restoClient from '../../const/restoClient.js'
 import {pagination} from '../../const/status.js'
 const searchProduct = async (req, res) => {
     try {
-        const productname = req.query.productname;
+        const {productname, sort} = req.query;
         const page = +req.query.page || 0;
         if (page < 0) page = 1;
         const offset = page * pagination.LIMIT;
         const [total, rows] = await Promise.all([
             await productModel.countDocuments(),
-            await productModel.find({ productname: { $regex: productname, $options: 'i' } }).skip(offset).limit(pagination.LIMIT),
+            await productModel.find({ productname: { $regex: productname, $options: 'i' } }).sort(`${sort}`).skip(offset).limit(pagination.LIMIT),
         ]);
         const nPages = Math.ceil(total / pagination.LIMIT);
         if (page > nPages)

@@ -9,8 +9,7 @@ const schema = new mongoose.Schema({
         type: Boolean,
         default: false,
     }
-},
-    { collection: 'user' });
+});
 
 const module = mongoose.model('user', schema);
 export default module;

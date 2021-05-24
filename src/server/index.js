@@ -1,64 +1,37 @@
 // use router.js
 import express from 'express';
 import bodyParser from 'body-parser';
-import cors from 'cors';
-import UserModel from './api/user/user.model.js'
 import db from './setup/mongoose.js';
-import jwt from 'jsonwebtoken'
-import argv from 'minimist'
-import swagger from 'swagger-node-express'
-import path from 'path'
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from './swagger/swagger.json';
+
+
+
 //-----------------
 // import { fileURLToPath } from 'url';
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = path.dirname(__filename);
 //-------------------
-import userRoute from './api/user/user.route.js'
-import cateRoute from './api/category/category.route.js'
-import productRoute from './api/product/product.route.js'
-import cartRoute from './api/cart/cart.route.js'
-import orderRoute from './api/order/order.route.js'
-import notifyRoute from './api/notify/notify.route.js'
-import reportRoute from './api/report/report.route.js'
-import searchRoute from './api/search/search.route.js'
+import userRoute from './api/user/user.router.js'
+import cateRoute from './api/category/category.router.js'
+import productRoute from './api/product/product.router.js'
+import cartRoute from './api/cart/cart.router.js'
+import orderRoute from './api/order/order.router.js'
+import notifyRoute from './api/notify/notify.router.js'
+import reportRoute from './api/report/report.router.js'
+import searchRoute from './api/search/search.router.js'
 
 
 //import cookieParser from 'cookie-parser'
 db;
 const app = express();
 // parse requests of content-type - application/json
-app.use(bodyParser.json());
+app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
+
 //app.use(cookieParser());
-
-// //SWAGGER
-const subpath = express();
-app.use("/v1", subpath);
-app.use(express.static('dist'));
-swagger.setAppHandler(subpath);
-swagger.setApiInfo({
-    title: "example API",
-    description: "API to do something, manage something...",
-    termsOfServiceUrl: "",
-    contact: "yourname@something.com",
-    license: "",
-    licenseUrl: ""
-});
-subpath.get('/', function (req, res) {
-    res.sendFile(path.resolve('dist/index.html'));
-});
-swagger.configureSwaggerPaths('', 'api-docs', '');
-
-const domain = 'localhost';
-if(argv.domain !== undefined)
-    domain = argv.domain;
-else
-    console.log('No --domain=xxx specified, taking default hostname "localhost".');
-const applicationUrl = 'http://' + domain;
-swagger.configure(applicationUrl, '1.0.0');
-// //-------------------
-
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use('/user', userRoute)
 app.use('/category', cateRoute)
