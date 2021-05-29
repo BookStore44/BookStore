@@ -4,22 +4,17 @@ import bodyParser from 'body-parser';
 import db from './setup/mongoose.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from './swagger/swagger.json';
+import router from './component/router.js';
 
-
+import dotenv from "dotenv";
+dotenv.config({ silent: process.env.NODE_ENV === 'production' });
 
 //-----------------
 // import { fileURLToPath } from 'url';
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = path.dirname(__filename);
 //-------------------
-import userRoute from './api/user/user.router.js'
-import cateRoute from './api/category/category.router.js'
-import productRoute from './api/product/product.router.js'
-import cartRoute from './api/cart/cart.router.js'
-import orderRoute from './api/order/order.router.js'
-import notifyRoute from './api/notify/notify.router.js'
-import reportRoute from './api/report/report.router.js'
-import searchRoute from './api/search/search.router.js'
+
 
 
 //import cookieParser from 'cookie-parser'
@@ -31,17 +26,31 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //app.use(cookieParser());
+app.use("", router)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.use('/user', userRoute)
-app.use('/category', cateRoute)
-app.use('/product', productRoute)
-app.use('/cart', cartRoute)
-app.use('/order', orderRoute)
-app.use('/report', reportRoute)
-app.use('/notify', notifyRoute)
-app.use('/search', searchRoute)
-app.listen(3000, () => {
+
+
+app.use((error, req, res, next) => {
+    if (error.details) {
+      error.details.body.forEach((element) => {
+        error.message = element.message;
+      });
+      return res.status(error.statusCode || 500).json({
+        error: {
+          status: error.statusCode || 500,
+          message: error.message || "Internal Server Error",
+        },
+      });
+    }
+    return res.status(error.httpCode || 500).json({
+      error: {
+        status: error.httpCode || 500,
+        message: error.message || "Internal Server Error",
+      },
+    });
+  });
+app.listen(process.env.PORT, () => {
     console.log('start server');
 });
 

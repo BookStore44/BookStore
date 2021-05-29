@@ -1,6 +1,6 @@
 //export ra indexx
 import mongoose from 'mongoose';
-
+mongoose.set('useCreateIndex', true);
 async function connectDB() {
     await mongoose.connect('mongodb://localhost:27017/bookstore', { useNewUrlParser: true, useUnifiedTopology: true });
     console.log('mongoose connected');
