@@ -18,10 +18,8 @@ const schema = new mongoose.Schema
             }
         }],
         status: Number,
-        // daycreate: Date,
-        // dayupdate: Date,
-        daydelivery: Date,
-        dayfinish: Date,
+        dayDelivery: Date,
+        dayFinish: Date,
         address: { type: String }
     });
 schema.set('timestamps', true);

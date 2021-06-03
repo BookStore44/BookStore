@@ -1,10 +1,10 @@
 import { validate, ValidationError, Joi } from 'express-validation'
-const checkReqCatename = {
+const checkReqCategoryName = {
     body: Joi.object({
         name: Joi.string()
             .required(),
     }),
 }
 export {
-    checkReqCatename
+    checkReqCategoryName
 };

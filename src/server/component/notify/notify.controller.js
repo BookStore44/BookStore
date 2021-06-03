@@ -1,11 +1,9 @@
-import OrderModel from '../order/order.model.js'
 import notifyModel from './notify.model.js'
 import {success} from '../response/success.js'
 import { pagination } from '../../const/status.js'
 import {myError} from '../response/myError.js'
 import statusCode from '../response/statusCode.js'
 import {errorList} from '../response/errorList.js'
-import mongoose from 'mongoose'
 const getAllNotify = async (req, res, next) => {
     try {
         const page = +req.query.page || 0;

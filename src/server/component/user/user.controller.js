@@ -128,8 +128,8 @@ const updateAvatar = async (req, res, next) => {
         if (req.file) {
             const imgPath = 'public/images/' + req.file.filename;
             //await userModel.updateOne({ _id: req.user._id }, { avatar: req.file.filename });
-            const userid = req.user._id;
-            await userModel.updateOne({ _id: userid }, { avatar: imgPath });
+            const userId = req.user._id;
+            await userModel.updateOne({ _id: userId }, { avatar: imgPath });
             return success(res, {
                 httpCode: statusCode.OK,
                 message: 'Updated ava'
@@ -149,7 +149,7 @@ const updateAvatar = async (req, res, next) => {
 const updateUserToStaff= async (req, res, next) => {
     try {
         const {_id}=req.query;
-        const user = await userModel.updateOne({_id, role:role.USER}, {role: role.STAFF});
+        await userModel.updateOne({_id, role:role.USER}, {role: role.STAFF});
         success(res, {
             httpCode: statusCode.OK,
             data: {_id, role:1},

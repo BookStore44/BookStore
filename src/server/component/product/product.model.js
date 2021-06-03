@@ -5,7 +5,6 @@ const schema = new mongoose.Schema({
         type: Number, 
         default: 0 
     },
-    //sold: { Number, default: 0 },
     image: Array,
     category: { 
         type: mongoose.Types.ObjectId, 

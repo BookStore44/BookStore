@@ -6,7 +6,6 @@ import cartRoute from './cart/cart.router.js'
 import orderRoute from './order/order.router.js'
 import notifyRoute from './notify/notify.router.js'
 import reportRoute from './report/report.router.js'
-import searchRoute from './search/search.router.js'
 import { express, Router } from "express";
 const router = Router();
 router.use('/user', userRoute)
@@ -16,5 +15,4 @@ router.use('/cart', cartRoute)
 router.use('/order', orderRoute)
 router.use('/report', reportRoute)
 router.use('/notify', notifyRoute)
-router.use('/search', searchRoute)
 export default router;

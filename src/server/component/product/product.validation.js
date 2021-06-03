@@ -3,7 +3,7 @@ const checkReqProduct = {
     body: Joi.object({
         name: Joi.string()
             .required(),
-        categoryname: Joi.string()
+        category: Joi.string()
             .required(),
         price: Joi.number()
         .required(),

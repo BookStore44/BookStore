@@ -43,9 +43,9 @@ const getListProductByCategoryId = async (req, res, next) => {
         if (page < 0) page = 1;
         const offset = page * pagination.LIMIT;
         const condition = {};
-        const categoryid = req.query.category;
-        if (categoryid && categoryid !== '') {
-            condition.category = categoryid;
+        const categoryId = req.query.category;
+        if (categoryId && categoryId !== '') {
+            condition.category = categoryId;
         }
         condition.lock = lock.DISABLE;
         const [total, rows] = await Promise.all([
@@ -72,13 +72,9 @@ const uploadImage = async (req, res, next) => {
     try {
         const files = req.files;
         if (files) {
-            //console.log(files.length());
-            //for (i = 0; i <= files.length(); i++)
             console.log(req.files[0].filename);
             const imgPath = 'public/images/' + files[0].filename;
             const { _id } = req.query;
-            //console.log(_id);
-            //await UserModel.updateOne({ _id: req.user._id }, { avatar: req.file.filename });
             await productModel.updateOne({ _id }, { image: imgPath });
             return success(res, {
                 httpCode: statusCode.OK,
@@ -97,10 +93,37 @@ const uploadImage = async (req, res, next) => {
         next(err)
     }
 };
-
+const searchProduct = async (req, res, next) => {
+    try {
+        const { name, sort } = req.query;
+        const page = +req.query.page || 0;
+        if (page < 0) page = 1;
+        const offset = page * pagination.LIMIT;
+        const [total, rows] = await Promise.all([
+            await productModel.countDocuments(),
+            await productModel.find({ name: { $regex: name, $options: 'i' } }, null, { sort: { price: `${sort}` }, skip: offset, limit: pagination.LIMIT })
+        ]);
+        const nPages = Math.ceil(total / pagination.LIMIT);
+        if (page > nPages) {
+            throw new myError({
+                httpCode: statusCode.NOT_FOUND,
+                description: errorList.PAGE_NOT_FOUND,
+            });
+        }
+        else {
+            return success(res, {
+                httpCode: statusCode.OK,
+                data: rows,
+            })
+        }
+    } catch (err) {
+        next(err);
+    }
+}
 export default {
     createProduct,
     deleteProductByName,
     getListProductByCategoryId,
-    uploadImage
+    uploadImage,
+    searchProduct
 }

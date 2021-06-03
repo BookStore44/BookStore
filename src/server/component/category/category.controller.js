@@ -1,6 +1,6 @@
 import categoryModel from './category.model.js'
 import productModel from '../product/product.model.js'
-import { pagination, role, lock, status } from '../../const/status.js'
+import { pagination, lock} from '../../const/status.js'
 import {success} from '../response/success.js'
 import {myError} from '../response/myError.js'
 import statusCode from '../response/statusCode.js'

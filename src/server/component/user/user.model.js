@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 const schema = new mongoose.Schema({
     username: String,
     password: String,
+    email: String,
     role: Number,
     avatar: String,
     lock: {

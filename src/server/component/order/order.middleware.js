@@ -6,9 +6,9 @@ import {errorList} from '../response/errorList.js'
 const checkStatus = async (req, res, next) => {//check client da dang nhap chua
     try {
         const { orderId, status } = req.body;
-        const ordercheck = await orderModel.findById(orderId);
-        const statusnew = ordercheck.status + 1;
-        if (statusnew == status && status<4) next();
+        const orderCheck = await orderModel.findById(orderId);
+        const statusNew = orderCheck.status + 1;
+        if (statusNew == status && status<4) next();
         else{
             throw new MyError({
                 name: 'new status is not valid',

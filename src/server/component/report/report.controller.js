@@ -14,7 +14,7 @@ const reportByProduct = async (req, res, next) => {
   const report = await orderModel.aggregate([
     {
       $match: {//loc nhung document voi dieu kien cho trước
-        dayfinish: { $gte: new Date(fromDay), $lte: new Date(toDay) },
+        dayFinish: { $gte: new Date(fromDay), $lte: new Date(toDay) },
       },
     },
 
@@ -57,7 +57,7 @@ const reportByCategory = async (req, res, next) => {
   const report = await orderModel.aggregate([
     {
       $match: {//loc nhung document voi dieu kien cho trước
-        dayfinish: { $gte: new Date(fromDay), $lte: new Date(toDay) },
+        dayFinish: { $gte: new Date(fromDay), $lte: new Date(toDay) },
       },
     },
     {

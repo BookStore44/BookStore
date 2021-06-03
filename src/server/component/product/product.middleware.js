@@ -25,9 +25,9 @@ const checkExistProductName = async (req, res, next) => {
 }
 const checkExistCategoryName = async (req, res, next) => {
     try {
-        const { categoryname } = req.body;
+        const { categoryName } = req.body;
         
-        const category = await categoryModel.findOne({ name: categoryname, lock: lock.DISABLE })
+        const category = await categoryModel.findOne({ name: categoryName, lock: lock.DISABLE })
    
         if (category) {
             req.body.categoryId = category.id;

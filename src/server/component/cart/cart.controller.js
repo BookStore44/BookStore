@@ -1,8 +1,5 @@
 import cartModel from './cart.model.js'
-import userModel from '../user/user.model.js'
-import { role, lock, status } from '../../const/status.js'
 import {success} from '../response/success.js'
-import {myError} from '../response/myError.js'
 import statusCode from '../response/statusCode.js'
 
 const updateCart = async (req, res, next) => {
@@ -51,7 +48,7 @@ const CartByUserId = async (req, res, next) => {
                 }, 
             }
         ]);
-        //const cartlock= cart.lock=true;
+
         return success(res, {
             httpCode: statusCode.OK,
             data: cart,
