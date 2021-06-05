@@ -1,4 +1,4 @@
-import { validate, ValidationError, Joi } from 'express-validation'
+import {Joi } from 'express-validation'
 const checkReqProduct = {
     body: Joi.object({
         name: Joi.string()
@@ -9,13 +9,13 @@ const checkReqProduct = {
         .required(),
     }),
 }
-const checkReqProductName = {
+const checkReqProductId = {
     body: Joi.object({
-        name: Joi.string()
+        _id: Joi.string()
             .required(),
     }),
 }
 export {
     checkReqProduct,
-    checkReqProductName
+    checkReqProductId
 };

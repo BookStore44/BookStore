@@ -1,13 +1,11 @@
 import cartModel from './cart.model.js'
 import {success} from '../response/success.js'
 import statusCode from '../response/statusCode.js'
-
 const updateCart = async (req, res, next) => {
     try {
         const {products} = req.body;
         const userId = req.user._id;
         await cartModel.updateOne({ userId }, { products });
-
         return success(res, {
             httpCode: statusCode.OK,
             message: 'product added to cart successfully',
@@ -17,10 +15,9 @@ const updateCart = async (req, res, next) => {
         next(err);
     }
 }
-
 const CartByUserId = async (req, res, next) => {
     try {
-        const userId = req.user._id;
+        const userId = req.user._id;  
         const cart = await cartModel.aggregate([
             {
                 $match: {//loc nhung document voi dieu kien cho trước
@@ -48,7 +45,6 @@ const CartByUserId = async (req, res, next) => {
                 }, 
             }
         ]);
-
         return success(res, {
             httpCode: statusCode.OK,
             data: cart,
@@ -57,8 +53,6 @@ const CartByUserId = async (req, res, next) => {
         next(err)
     }
 }
-
-
 export default {
     CartByUserId,
     updateCart

@@ -1,10 +1,11 @@
 import categoryModel from './category.model.js'
 import productModel from '../product/product.model.js'
-import { pagination, lock} from '../../const/status.js'
-import {success} from '../response/success.js'
-import {myError} from '../response/myError.js'
+import { pagination, lock } from '../../const/status.js'
+import { success } from '../response/success.js'
+import { myError } from '../response/myError.js'
 import statusCode from '../response/statusCode.js'
-import {errorList} from '../response/errorList.js'
+import { errorList } from '../response/errorList.js'
+import { categoryService } from './category.service.js'
 const createCategory = async (req, res, next) => {
     try {
         const category = await categoryModel.create({
@@ -21,16 +22,16 @@ const createCategory = async (req, res, next) => {
 }
 const deleteCategoryById = async (req, res, next) => {
     try {
-        const {_id} = req.body;
+        const { _id } = req.body;
         await productModel.updateMany({ category: _id }, { "$set": { lock: lock.ACTIVE } });
         const category = await categoryModel.findOneAndUpdate({ _id }, { lock: lock.ACTIVE })
         if (!category) {
             throw new myError({
-                name:'category does not exist',
+                name: 'category does not exist',
                 httpCode: statusCode.NOT_FOUND,
                 description: errorList.FIND_ERROR,
             });
-           
+
         }
         else {
             return success(res, {
@@ -45,48 +46,34 @@ const deleteCategoryById = async (req, res, next) => {
 };
 const getListCategory = async (req, res, next) => {
     try {
-        const page = +req.query.page || 0;
-        if (page < 0) page = 1;
-        const offset = page * pagination.LIMIT;
-        const [total, rows] = await Promise.all([
-            await categoryModel.countDocuments({ lock: lock.DISABLE }),
-            await categoryModel.find({ lock: lock.DISABLE }, null, { skip: offset, limit: pagination.LIMIT }),
-        ]);
-        const nPages = Math.ceil(total / pagination.LIMIT);
-        if (page > nPages) {
-            throw new myError({
-                httpCode: statusCode.NOT_FOUND,
-                description: errorList.PAGE_NOT_FOUND,
-            });
-        }
-        else {
-            return success(res, {
-                httpCode: statusCode.OK,
-                data: rows,
-            })
-        }
+        const page = +req.params.page || 0;
+        const categories = await categoryService.getList({page, condition: {lock: lock.DISABLE}});
+        return success(res, {
+            httpCode: statusCode.OK,
+            data: categories,
+        })
     }
     catch (err) {
-        next(err);
-    }
+    next(err);
+}
 }
 const updateCategoryNameById = async (req, res, next) => {
     try {
-        const {_id, name} = req.body;
+        const { _id, name } = req.body;
         const category = await categoryModel.findOneAndUpdate({ _id }, { name })
         if (!category) {
             throw new myError({
-                name:'category does not exist',
+                name: 'category does not exist',
                 httpCode: statusCode.NOT_FOUND,
                 description: errorList.FIND_ERROR,
             });
-           
+
         }
         else {
             return success(res, {
                 httpCode: statusCode.OK,
                 message: 'Update category successfully',
-                data: {_id, name}
+                data: { _id, name }
             })
         }
     } catch (err) {

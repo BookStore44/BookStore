@@ -7,9 +7,8 @@ import { myError } from '../response/myError.js'
 import statusCode from '../response/statusCode.js'
 import { errorList } from '../response/errorList.js'
 import cartModel from '../cart/cart.model.js'
-
+import {userService} from './user.service.js'
 import mongoose from 'mongoose'
-
 const signUp = async (req, res, next) => {
     const session = await mongoose.startSession();
     try {
@@ -77,7 +76,8 @@ const signIn = async (req, res, next) => {
 
 const getListStaff = async (req, res, next) => {
     try {
-        const staff = await userModel.find({ role: role.STAFF });
+        const page = +req.params.page || 0;
+        const staff = await userService.getList({ page, condition: { role: role.STAFF } });
         success(res, {
             httpCode: statusCode.OK,
             data: staff,
@@ -127,7 +127,6 @@ const updateAvatar = async (req, res, next) => {
     try {
         if (req.file) {
             const imgPath = 'public/images/' + req.file.filename;
-            //await userModel.updateOne({ _id: req.user._id }, { avatar: req.file.filename });
             const userId = req.user._id;
             await userModel.updateOne({ _id: userId }, { avatar: imgPath });
             return success(res, {

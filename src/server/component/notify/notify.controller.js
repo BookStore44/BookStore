@@ -1,39 +1,26 @@
 import notifyModel from './notify.model.js'
-import {success} from '../response/success.js'
+import { success } from '../response/success.js'
 import { pagination } from '../../const/status.js'
-import {myError} from '../response/myError.js'
+import { myError } from '../response/myError.js'
 import statusCode from '../response/statusCode.js'
-import {errorList} from '../response/errorList.js'
-const getAllNotify = async (req, res, next) => {
+import { errorList } from '../response/errorList.js'
+import { notifyService } from './notify.service.js'
+const getListNotify = async (req, res, next) => {
     try {
-        const page = +req.query.page || 0;
-        if (page < 0) page = 1;
-        const offset = page * pagination.LIMIT;
-        const [total, rows] = await Promise.all([
-            await notifyModel.countDocuments(),
-            await notifyModel.find(null, null, { sort: { 'createdAt': -1 }, skip: offset, limit: pagination.LIMIT }),
-        ]);
-        const nPages = Math.ceil(total / pagination.LIMIT);
-        if (page > nPages) {
-            throw new myError({
-                httpCode: statusCode.NOT_FOUND,
-                description: errorList.PAGE_NOT_FOUND,
-            });
-        }
-        else {
-            return success(res, {
-                httpCode: statusCode.OK,
-                message: 'list notify',
-                data: rows,
-            })
-        }
+        const page = +req.params.page || 0;
+        const notifies = await notifyService.getList({ page, sort: { 'createdAt': -1 } });
+        return success(res, {
+            httpCode: statusCode.OK,
+            data: notifies,
+            message: 'list notify'
+        })
     } catch (err) {
         next(err)
     }
 }
 const getNotifyById = async (req, res, next) => {
     try {
-        const {_id} = req.query;
+        const { _id } = req.query;
         const notify = await notifyModel.findById(_id).populate('orderId').exec();
         return success(res, {
             httpCode: statusCode.OK,
@@ -46,9 +33,7 @@ const getNotifyById = async (req, res, next) => {
         })
     }
 }
-
-
 export default {
-    getAllNotify,
+    getListNotify,
     getNotifyById
 }

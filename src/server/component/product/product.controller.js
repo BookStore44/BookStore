@@ -5,6 +5,7 @@ import { success } from '../response/success.js'
 import { myError } from '../response/myError.js'
 import statusCode from '../response/statusCode.js'
 import { errorList } from '../response/errorList.js'
+import {productService} from './product.service.js'
 const createProduct = async (req, res, next) => {
     try {
         console.log(req.body);
@@ -14,7 +15,6 @@ const createProduct = async (req, res, next) => {
             category: categoryId,
             price,
         });
-
         return success(res, {
             httpCode: statusCode.CREATED,
             message: 'successfully added product',
@@ -24,10 +24,10 @@ const createProduct = async (req, res, next) => {
         next(err);
     }
 }
-const deleteProductByName = async (req, res, next) => {
+const deleteProductById = async (req, res, next) => {
     try {
-        const name = req.body.name;
-        const product = await productModel.findOneAndUpdate({ name }, { lock: lock.ACTIVE });
+        const {_id} = req.body;
+        const product = await productModel.findOneAndUpdate({ _id }, { lock: lock.ACTIVE });
         return success(res, {
             httpCode: statusCode.OK,
             message: 'Delete Product successfully',
@@ -39,31 +39,36 @@ const deleteProductByName = async (req, res, next) => {
 };
 const getListProductByCategoryId = async (req, res, next) => {
     try {
-        const page = +req.query.page || 0;
-        if (page < 0) page = 1;
-        const offset = page * pagination.LIMIT;
-        const condition = {};
-        const categoryId = req.query.category;
-        if (categoryId && categoryId !== '') {
-            condition.category = categoryId;
-        }
-        condition.lock = lock.DISABLE;
-        const [total, rows] = await Promise.all([
-            await productModel.countDocuments(condition),
-            await productModel.find(condition, null, { skip: offset, limit: pagination.LIMIT }).populate('category').exec(),
-        ]);
-        const nPages = Math.ceil(total / pagination.LIMIT);
-        if (page > nPages)
-            throw new myError({
-                httpCode: statusCode.NOT_FOUND,
-                description: errorList.PAGE_NOT_FOUND,
-            });
-        else {
+        const {page, category} = req.params ;
+        console.log(page);
+        console.log(category);
+        const notifies = await productService.getList({ condition: {lock: lock.DISABLE, category}, page, populate: 'category'});
+        console.log(notifies)
+        // const page = +req.query.page || 0;
+        // if (page < 0) page = 1;
+        // const offset = page * pagination.LIMIT;
+        // const condition = {};
+        // const categoryId = req.query.category;
+        // if (categoryId && categoryId !== '') {
+        //     condition.category = categoryId;
+        // }
+        // condition.lock = lock.DISABLE;
+        // const [total, rows] = await Promise.all([
+        //     await productModel.countDocuments(condition),
+        //     await productModel.find(condition, null, { skip: offset, limit: pagination.LIMIT }).populate('category').exec(),
+        // ]);
+        // const nPages = Math.ceil(total / pagination.LIMIT);
+        // if (page > nPages)
+        //     throw new myError({
+        //         httpCode: statusCode.NOT_FOUND,
+        //         description: errorList.PAGE_NOT_FOUND,
+        //     });
+        // else {
             return success(res, {
                 httpCode: statusCode.OK,
-                data: rows
+                data: notifies
             })
-        }
+        
     } catch (err) {
         next(err);
     }
@@ -122,7 +127,7 @@ const searchProduct = async (req, res, next) => {
 }
 export default {
     createProduct,
-    deleteProductByName,
+    deleteProductById,
     getListProductByCategoryId,
     uploadImage,
     searchProduct
