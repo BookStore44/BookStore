@@ -1,13 +1,13 @@
 import ProductModel from './product.model.js'
 import categoryModel from '../category/category.model.js'
-import jwt from 'jsonwebtoken'
-import { validate, ValidationError, Joi } from 'express-validation'
-import { role, lock, status } from '../../const/status.js'
-import {success} from '../response/success.js'
+
+import { lock} from '../../const/status.js'
+
 import { myError } from '../response/myError.js'
 import statusCode from '../response/statusCode.js'
 import { errorList } from '../response/errorList.js'
-const checkExistProductName = async (req, res, next) => {
+import { isValidObjectId } from "mongoose";
+const checkExistProduct = async (req, res, next) => {
     try {
         const name = req.body.name;
         const data = await ProductModel.findOne({ name, lock: lock.DISABLE })
@@ -19,11 +19,11 @@ const checkExistProductName = async (req, res, next) => {
             });
         }
         else next();
-    } catch (error) {
+    } catch (err) {
         next(err);
     }
 }
-const checkExistCategoryName = async (req, res, next) => {
+const checkExistCategory = async (req, res, next) => {
     try {
         const { categoryName } = req.body;
         
@@ -35,17 +35,27 @@ const checkExistCategoryName = async (req, res, next) => {
         }
         else {
             throw new myError({
-                name:'category name already exist',
-                httpCode: statusCode.ALREADY_EXITS,
-                description: errorList.ALREADY_EXITS,
+                name:'can not find category',
+                httpCode: statusCode.NOT_FOUND,
+                description: errorList.FIND_ERROR,
             });
         }
-    } catch (error) {
+    } catch (err) {
         next(err)
     }
 }
-
+const validateId = (req, res, next) => {
+    if (!isValidObjectId(req.params.id)) {
+        throw new myError({
+            name: req.params.id,
+            httpCode: statusCode.BAD_REQUEST,
+            description: errorList.MUST_BE_OBJECTID,
+        });
+    }
+    next();
+};
 export default {
-    checkExistProductName,
-    checkExistCategoryName,
+    checkExistProduct,
+    checkExistCategory,
+    validateId
 };

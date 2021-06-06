@@ -6,8 +6,9 @@ import { myError } from '../response/myError.js'
 import statusCode from '../response/statusCode.js'
 import { errorList } from '../response/errorList.js'
 import { categoryService } from './category.service.js'
-const createCategory = async (req, res, next) => {
+const addCategory = async (req, res, next) => {
     try {
+        await categoryService.checkExist(req.body);
         const category = await categoryModel.create({
             name: req.body.name,
         })
@@ -20,10 +21,10 @@ const createCategory = async (req, res, next) => {
         next(error)
     }
 }
-const deleteCategoryById = async (req, res, next) => {
+const deleteCategory = async (req, res, next) => {
     try {
-        const { _id } = req.body;
-        await productModel.updateMany({ category: _id }, { "$set": { lock: lock.ACTIVE } });
+        const { id } = req.params;
+        await productModel.updateMany({ category: id }, { "$set": { lock: lock.ACTIVE } });
         const category = await categoryModel.findOneAndUpdate({ _id }, { lock: lock.ACTIVE })
         if (!category) {
             throw new myError({
@@ -44,23 +45,39 @@ const deleteCategoryById = async (req, res, next) => {
         next(err)
     }
 };
+
 const getListCategory = async (req, res, next) => {
     try {
         const page = +req.params.page || 0;
-        const categories = await categoryService.getList({page, condition: {lock: lock.DISABLE}});
+        const categories = await categoryService.getList({ page, condition: { lock: lock.DISABLE } });
         return success(res, {
             httpCode: statusCode.OK,
             data: categories,
         })
     }
     catch (err) {
-    next(err);
+        next(err);
+    }
 }
-}
-const updateCategoryNameById = async (req, res, next) => {
+const getCategory = async (req, res, next) => {
     try {
-        const { _id, name } = req.body;
-        const category = await categoryModel.findOneAndUpdate({ _id }, { name })
+        const { id } = req.params;
+        console.log(id);
+        const category = await categoryModel.findById(id);
+        return success(res, {
+            httpCode: statusCode.OK,
+            data: category,
+        })
+    }
+    catch (err) {
+        next(err);
+    }
+}
+const updateCategory = async (req, res, next) => {
+    try {
+        const { _id } = req.params;
+        const { name } = req.body;
+        const category = await categoryModel.findOneAndUpdate({ _id: id }, { name })
         if (!category) {
             throw new myError({
                 name: 'category does not exist',
@@ -81,8 +98,9 @@ const updateCategoryNameById = async (req, res, next) => {
     }
 };
 export default {
-    createCategory,
-    deleteCategoryById,
+    addCategory,
+    deleteCategory,
     getListCategory,
-    updateCategoryNameById
+    getCategory,
+    updateCategory
 }

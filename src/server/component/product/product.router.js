@@ -6,11 +6,39 @@ import productController from './product.controller.js'
 import { checkReqProduct, checkReqProductId } from './product.validation.js'
 const router = express.Router();
 
-import {upload} from '../../const/saveImage.js'
-router.post('/addProduct',validate(checkReqProduct), authController.checkLogin, authController.isStaffOrManager,productMiddleware.checkExistProductName, productMiddleware.checkExistCategoryName, productController.createProduct)
-router.get('/allProduct/:category/:page', authController.checkLogin, authController.isStaffOrManager, productController.getListProductByCategoryId)
-router.delete('/deleteProduct',validate(checkReqProductId), authController.checkLogin, authController.isStaffOrManager, productController.deleteProductById)
+import { upload } from '../../const/saveImage.js'
+router.post('/',
+    validate(checkReqProduct),
+    authController.isStaffOrManager,
+    productMiddleware.checkExistProduct,
+    productMiddleware.checkExistCategory,
+    productController.createProduct);
 
-router.put("/image",upload.array('product', 10), productController.uploadImage);
-router.get('/search', productController.searchProduct);
+router.delete('/:id',
+    productMiddleware.validateId,
+    authController.isStaffOrManager,
+    productController.deleteProduct)
+
+router.get('/:id',
+    productMiddleware.validateId,
+    authController.isStaffOrManager,
+    productController.deleteProduct);
+
+router.put('/:id',
+    productMiddleware.validateId,
+    authController.isStaffOrManager,
+    productController.updateProduct);
+
+
+router.get('/allProduct/:category/:page',
+    authController.isStaffOrManager,
+    productController.getListProductByCategoryId)
+
+router.put("/image",
+    upload.array('product', 10),
+    productController.uploadImage);
+
+router.get('/search',
+    productController.searchProduct);
+    
 export default router;

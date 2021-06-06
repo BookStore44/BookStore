@@ -3,9 +3,9 @@ import cartModel from '../cart/cart.model.js'
 import { status } from '../../const/status.js'
 import { success } from '../response/success.js'
 import notifyModel from '../notify/notify.model.js'
-import { myError } from '../response/myError.js'
+
 import statusCode from '../response/statusCode.js'
-import { errorList } from '../response/errorList.js'
+
 import mongoose from 'mongoose';
 
 const createOrder = async (req, res, next) => {
@@ -34,7 +34,7 @@ const createOrder = async (req, res, next) => {
   }
 }
 
-const updateStatus = async (req, res, next) => {
+const updateOrder = async (req, res, next) => {
 
   try {
     const { orderId, status } = req.body;
@@ -54,10 +54,24 @@ const updateStatus = async (req, res, next) => {
     next(err)
   }
 }
-
+const getOrder = async (req, res, next) => {
+  try {
+      const { id } = req.params;
+      console.log(id);
+      const order = await orderModel.findById(id);
+      return success(res, {
+          httpCode: statusCode.OK,
+          data: order,
+      })
+  }
+  catch (err) {
+      next(err);
+  }
+}
 export default {
   createOrder,
-  updateStatus,
+  updateOrder,
+  getOrder
 }
 
 

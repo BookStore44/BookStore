@@ -1,8 +1,18 @@
-// config model
+
 import mongoose from 'mongoose';
 const schema = new mongoose.Schema({
-    username: String,
-    password: String,
+    username: {
+        type: String,
+        require: true,
+        min: 3,
+        max: 30
+    },
+    password: {
+        type: String,
+        require: true,
+        min: 3,
+        max: 30
+    },
     email: String,
     role: Number,
     avatar: String,

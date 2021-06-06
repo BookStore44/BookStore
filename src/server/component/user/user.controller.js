@@ -87,10 +87,10 @@ const getListStaff = async (req, res, next) => {
         next(err)
     }
 }
-const getUserById = async (req, res, next) => {
+const getUser = async (req, res, next) => {
     try {
-        const {_id}=req.query;
-        const user = await userModel.findById(_id);
+        const {id}=req.params;
+        const user = await userModel.findById(id);
         success(res, {
             httpCode: statusCode.OK,
             data: user,
@@ -101,10 +101,10 @@ const getUserById = async (req, res, next) => {
     }
 }
 
-const deleteUserById = async (req, res, next) => {
+const deleteUser = async (req, res, next) => {
     try {
-        const {_id} = req.body;
-        const user = await userModel.findOneAndUpdate({ _id }, { lock: lock.ACTIVE })
+        const {id} = req.params;
+        const user = await userModel.findOneAndUpdate({ _id: id }, { lock: lock.ACTIVE })
         if (user) {
             return success(res, {
                 httpCode: statusCode.OK,
@@ -145,13 +145,30 @@ const updateAvatar = async (req, res, next) => {
         next(err)
     }
 };
-const updateUserToStaff= async (req, res, next) => {
+
+const changePermission= async (req, res, next) => {
     try {
-        const {_id}=req.query;
-        await userModel.updateOne({_id, role:role.USER}, {role: role.STAFF});
+        const {id}=req.params;
+        const {role}=req.body;
+        await userModel.findOneAndUpdate({_id:id}, {role});
         success(res, {
             httpCode: statusCode.OK,
-            data: {_id, role:1},
+            data: {id, role},
+            message: 'success'
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+const updateUser = async (req, res, next) => {
+    try {
+        const {id}=req.params;
+        const {username, password, email}=req.body;
+        const newPassword= bcrypt.hashSync(password, 2);
+        await userModel.findOneAndUpdate({_id:id}, {username, password: newPassword, email});
+        success(res, {
+            httpCode: statusCode.OK,
+            data: {id, role},
             message: 'success'
         })
     } catch (err) {
@@ -161,9 +178,10 @@ const updateUserToStaff= async (req, res, next) => {
 export default {
     signUp,
     signIn,
+    updateUser,
     getListStaff,
-    deleteUserById,
+    deleteUser,
     updateAvatar,
-    getUserById,
-    updateUserToStaff
+    getUser,
+    changePermission
 };
