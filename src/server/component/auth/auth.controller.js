@@ -27,9 +27,7 @@ const checkLogin = async (req, res, next) => { //kiem tra tai khoan nay da dang 
 const isManager = async(req, res, next) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
-        //console.log(token);
         const verify = jwt.verify(token, process.env.SECRETKEY);
-        //console.log(data.username)
         const user = await userModel.findOne({ username: verify.username, lock: lock.DISABLE })
         if (user) {
             req.user = user;
