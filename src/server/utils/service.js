@@ -22,7 +22,7 @@ export const service = (model) => {
         try {
           const { condition,populate, dataGet, option } = query;
           let item = await model
-            .findOne(condition, dataGet, option)
+            .findOne(condition, dataGet, option) 
             .populate(populate);
           return item;
         } catch (error) {
